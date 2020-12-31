@@ -23,19 +23,19 @@ from tensorflow.keras.layers import Dense, Input
 input1 = Input(shape = (3,))
 dense1 = Dense(10, activation = 'relu')(input1)
 dense1 = Dense(50, activation = 'relu')(dense1)
-dense1 = Dense(100, activation = 'relu')(dense1)
+dense1 = Dense(40, activation = 'relu')(dense1)
 dense1 = Dense(20, activation = 'relu')(dense1)
 output1 = Dense(3)(dense1)
 
 #모델 분기 1
 output1 = Dense(30)(dense1)
-output1 = Dense(100)(output1)
+output1 = Dense(20)(output1)
 output1 = Dense(20)(output1)
 output1 = Dense(3)(output1)
 
 #모델 분기 2
 output2 = Dense(30)(dense1)
-output2 = Dense(100)(output2)
+output2 = Dense(20)(output2)
 output2 = Dense(20)(output2)
 output2 = Dense(3)(output2)
 

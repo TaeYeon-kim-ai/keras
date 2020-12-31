@@ -12,10 +12,10 @@ y = np.array([1, 2, 3])
 model = Sequential() #순차적 모델
 model.add(Dense(5, input_dim=1, activation='linear',)) #dam 1개 차원
 model.add(Dense(30, activation='linear')) # 모델 수 hidden layer
-model.add(Dense(30, na))# 모델 수 hidden layer 
+model.add(Dense(30))# 모델 수 hidden layer 
 model.add(Dense(30))# 모델 수 hidden layer
 model.add(Dense(30))# 모델 수 hidden layer
-model.add(Dense(40, name))# 모델 수 hidden layer
+model.add(Dense(40))# 모델 수 hidden layer
 model.add(Dense(40))# 모델 수 hidden layer
 model.add(Dense(1))
 
