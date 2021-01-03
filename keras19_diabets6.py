@@ -48,7 +48,7 @@ EarlyStopping
 '''
 from tensorflow.keras.callbacks import EarlyStopping
 early_stopping = EarlyStopping(monitor='loss', patience=20, mode='auto')
-model.fit(x_test, y_test, epochs=1000, batch_size=7, validation_data= (x_val, y_val), callbacks = [early_stopping])
+model.fit(x_train, y_train, epochs=1000, batch_size=7, validation_data= (x_val, y_val), callbacks = [early_stopping])
 
 #4. 평가, 예측
 loss, mae = model.evaluate(x_test, y_test)
