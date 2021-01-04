@@ -119,7 +119,7 @@ print("R2 : ", r2)
 # loss :  57.708213806152344
 # mae :  5.144794464111328
 # RMSE :  7.596591897809446
-# R2 :  0.991656001135139
+# R2 :  0.991656001135139 ---??? 뭔가잘못된
 
 #model = Sequential()
 # model.add(Dense(100, input_dim=10, activation = 'relu')) # 기본값 : activation='linear' 

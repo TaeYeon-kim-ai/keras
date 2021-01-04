@@ -28,7 +28,7 @@ print(dataset.feature_names)
 #  = (x - np.min(x)) / (np.max(x) - np.min(x))
 from sklearn.preprocessing import MinMaxScaler
 scaler = MinMaxScaler()
-scaler.fit(x_train)
+scaler.fit(x)
 x = scaler.transform(x)
 print(np.max(x), np.min(x)) # 711.0.0.0 -> 1.0.0.0
 '''

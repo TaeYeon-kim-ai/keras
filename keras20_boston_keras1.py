@@ -36,7 +36,7 @@ x_test, x_val, y_test, y_val = train_test_split(x_test, y_test, train_size= 0.8,
 #2. 모델링
 input1 = Input(shape=(13,))
 dense1 = Dense(128, activation='relu')(input1)
-dense2 = Dense(128, activation='relu')(dense1) 
+dense2 = Dense(128, activation='relu')(dense1)
 dense3 = Dense(64, activation='relu')(dense2)
 dense4 = Dense(64, activation='relu')(dense3)
 outputs = Dense(1)(dense4)

@@ -43,7 +43,7 @@ model.add(Dense(1))
 
 #3. 컴파일, 훈련
 model.compile(loss = 'mse', optimizer = 'adam', metrics = ['mae'])
-model.fit(x_train, y_train, epochs = 1000, batch_size = 7, validation_data = (x_val, y_val))
+model.fit(x_train, y_train, epochs = 500, batch_size = 7, validation_data = (x_val, y_val))
 
 #4. 평가, 예측
 loss, mae = model.evaluate(x_test, y_test)
