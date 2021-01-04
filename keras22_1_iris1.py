@@ -39,9 +39,9 @@ from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, Input
 
 input1 = Input(shape = (4,)) 
-dense1 = Dense(64, activation='relu')(input1)
-dense2 = Dense(128, activation='relu')(dense1)
-dense3 = Dense(128, activation='relu')(dense2)
+dense1 = Dense(60, activation='relu')(input1)
+dense2 = Dense(60, activation='relu')(dense1)
+dense3 = Dense(120, activation='relu')(dense2)
 dense4 = Dense(90, activation='relu')(dense3)
 dense5 = Dense(70, activation='relu')(dense4)
 outputs = Dense(3, activation='softmax')(dense5)#원핫인코더한 수와 동일
@@ -57,7 +57,10 @@ model.summary()
 model.compile(loss = 'categorical_crossentropy', optimizer = 'adam', metrics = ['acc'])
 #다중분류일 경우 : 
 #model.compile(loss = 'mse', optimizer = 'adam', metrics = ['acc'])
-model.fit(x_train, y_train, epochs = 50, batch_size = 7, validation_data = (x_val, y_val))
+from tensorflow.keras.callbacks import EarlyStopping
+early_stopping = EarlyStopping(monitor = 'loss', patience = 20, mode = 'auto') # #loss값이 가장낮을 때를 10번 지나갈 때 까지 기다렸다가 stop. mode는 min, max, auto조정가능
+model.fit(x_train, y_train, epochs = 50, batch_size = 7, validation_data = (x_val, y_val), callbacks = [early_stopping])
+model.compile(loss = 'binary_crossentropy', optimizer = 'adam', metrics = ['acc'])
 
 #4. 평가
 loss, acc = model.evaluate(x_test, y_test)

@@ -39,11 +39,11 @@ from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, Input
 
 input1 = Input(shape = (30,))
-dense1 = Dense(64, activation='relu')(input1)
-dense2 = Dense(128, activation='relu')(dense1)
-dense3 = Dense(128, activation='relu')(dense2)
-dense4 = Dense(80, activation='relu')(dense3)
-dense5 = Dense(40, activation='relu')(dense4)
+dense1 = Dense(20, activation='relu')(input1)
+dense2 = Dense(20, activation='relu')(dense1)
+dense3 = Dense(20, activation='relu')(dense2)
+dense4 = Dense(20, activation='relu')(dense3)
+dense5 = Dense(20, activation='relu')(dense4)
 outputs = Dense(2, activation='softmax')(dense5)
 model = Model(inputs = input1, outputs = outputs)
 model.summary()
@@ -57,7 +57,9 @@ model.summary()
 model.compile(loss = 'categorical_crossentropy', optimizer = 'adam', metrics = ['acc'])
 #이진분류 일때는 무조건 binary_crossentropy
 #model.compile(loss = 'mse', optimizer = 'adam', metrics = ['acc'])
-model.fit(x_train, y_train, epochs = 100, batch_size = 7 ,validation_data = (x_val, y_val))
+from tensorflow.keras.callbacks import EarlyStopping
+early_stopping = EarlyStopping(monitor = 'loss', patience = 20, mode = 'auto')
+model.fit(x_train, y_train, epochs = 1000, batch_size = 7 ,validation_data = (x_val, y_val), callbacks = [early_stopping])
 
 #4. 평가
 loss, acc = model.evaluate(x_test, y_test)
@@ -69,19 +71,23 @@ print(y_train[-5:-1])
 print(y_pred)
 
 #print(np.argmax(y_pred, axis = 0))
-print(np.argmax(y_pred, axis = -1))
+print(np.argmax(y_pred, axis = 1))
 
 #실습1. acc 0.985이상 올릴 것
 #실습2. predict 출력해볼것
 #y[-5:-1] = ??
 
-# loss :  0.5122783184051514
-# acc :  0.9780219793319702
-# [[0.]
-#  [0.]
-#  [0.]
-#  [0.]]
-# [0 0 0 0]
+# loss :  0.1683250069618225
+# acc :  0.9890109896659851
+# [[0. 1.]
+#  [0. 1.]
+#  [1. 0.]
+#  [0. 1.]]
+# [[7.1000011e-07 9.9999928e-01]
+#  [8.5848988e-05 9.9991417e-01]
+#  [1.0000000e+00 0.0000000e+00]
+#  [1.6419766e-04 9.9983573e-01]]
+# [1 1 0 1]
 '''
 Breast cancer wisconsin (diagnostic) dataset
 --------------------------------------------
