@@ -17,29 +17,37 @@ print(x[:5])
 #원핫인코딩 OneHotEncofing
 from tensorflow.keras.utils import to_categorical
 #from keras.utils.np_utils import to_categorical
-y = to_categorical(y)
+#y = to_categorical(y)
 # y_train = to_categorical(y_train) #to_categorical 적용
-# y_test = to_categorical(y_test) #to_categorical 적용
+# y_test = to_categorical(y_test) #to_categorical 적용\
+
+#  sklearn.onehotencoding
+from sklearn.preprocessing import OneHotEncoder
+one = OneHotEncoder()           
+y = y.reshape(-1,1)                 #. y_train => 2D
+one.fit(y)                          #. Set
+y = one.transform(y).toarray()      #. transform
 print(y)
 print(x.shape) #(150,4)
 print(y.shape) #(150,3)
 
 from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size = 0.8, shuffle = True, random_state = 66)
-x_test, x_val, y_test, y_val = train_test_split(x_test, y_test, train_size = 0.2, shuffle = True, random_state = 66)
+x_train, x_val, y_train, y_val = train_test_split(x_test, y_test, train_size = 0.8, shuffle = True, random_state = 66)
 
-# from sklearn.preprocessing import MinMaxScaler
-# scaler = MinMaxScaler()
-# scaler.fit(x_train)
-# x_train = scaler.transform(x_train)
-# x_test = scaler.transform(x_test)
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+scaler.fit(x_train)
+x_train = scaler.transform(x_train)
+x_test = scaler.transform(x_test)
+x_val = scaler.transform(x_val)
 
 #2. 모델링
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, Input
 
 input1 = Input(shape = (4,)) 
-dense1 = Dense(60, activation='relu')(input1)
+dense1 = Dense(500, activation='relu')(input1)
 dense2 = Dense(60, activation='relu')(dense1)
 dense3 = Dense(120, activation='relu')(dense2)
 dense4 = Dense(90, activation='relu')(dense3)
@@ -54,13 +62,12 @@ model.summary()
 
 
 #3. 컴파일,
-model.compile(loss = 'categorical_crossentropy', optimizer = 'adam', metrics = ['acc'])
 #다중분류일 경우 : 
 #model.compile(loss = 'mse', optimizer = 'adam', metrics = ['acc'])
 from tensorflow.keras.callbacks import EarlyStopping
 early_stopping = EarlyStopping(monitor = 'loss', patience = 20, mode = 'auto') # #loss값이 가장낮을 때를 10번 지나갈 때 까지 기다렸다가 stop. mode는 min, max, auto조정가능
-model.fit(x_train, y_train, epochs = 50, batch_size = 7, validation_data = (x_val, y_val), callbacks = [early_stopping])
-model.compile(loss = 'binary_crossentropy', optimizer = 'adam', metrics = ['acc'])
+model.compile(loss = 'categorical_crossentropy', optimizer = 'adam', metrics = ['acc'])
+model.fit(x_train, y_train, epochs = 500, batch_size = 7, validation_data = (x_val, y_val), verbose = 1 ,callbacks = [early_stopping])
 
 #4. 평가
 loss, acc = model.evaluate(x_test, y_test)
@@ -78,19 +85,17 @@ print(np.argmax(y_pred, axis = -1))
 
 
 
-# loss :  0.06839793175458908
-# acc :  1.0
-# [[0.0000000e+00 2.7007590e-25 1.0000000e+00]
-#  [0.0000000e+00 4.3190987e-23 1.0000000e+00]
-#  [0.0000000e+00 5.2082751e-24 1.0000000e+00]
-#  [0.0000000e+00 4.5696386e-26 1.0000000e+00]]
+# loss :  0.14753571152687073
+# acc :  0.9666666388511658
+# [[2.1295748e-11 1.3989408e-07 9.9999988e-01]
+#  [1.1455371e-19 7.7679168e-17 1.0000000e+00]
+#  [3.5330005e-12 1.4296412e-08 1.0000000e+00]
+#  [1.3562451e-10 5.9833246e-07 9.9999940e-01]]
 # [[0. 0. 1.]
 #  [0. 0. 1.]
 #  [0. 0. 1.]
 #  [0. 0. 1.]]
-# [0 1 0]
 # [2 2 2 2]
-
 
 
 '''

@@ -24,15 +24,14 @@ y = to_categorical(y)
 
 from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size = 0.8, shuffle = True, random_state = 66)
-x_test, x_val, y_test, y_val = train_test_split(x_test, y_test, train_size = 0.8, shuffle = True, random_state = 66)
+x_train, x_val, y_train, y_val = train_test_split(x_test, y_test, train_size = 0.8, shuffle = True, random_state = 66)
 
 from sklearn.preprocessing import MinMaxScaler
 scaler = MinMaxScaler()
 scaler.fit(x_train)
 x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
-
-
+x_val = scaler.transform(x_val)
 
 #2. 모델링
 from tensorflow.keras.models import Sequential, Model
@@ -59,7 +58,7 @@ model.compile(loss = 'categorical_crossentropy', optimizer = 'adam', metrics = [
 #model.compile(loss = 'mse', optimizer = 'adam', metrics = ['acc'])
 from tensorflow.keras.callbacks import EarlyStopping
 early_stopping = EarlyStopping(monitor = 'loss', patience = 20, mode = 'auto')
-model.fit(x_train, y_train, epochs = 1000, batch_size = 7 ,validation_data = (x_val, y_val), callbacks = [early_stopping])
+model.fit(x_train, y_train, epochs = 1000, batch_size = 7 ,validation_data = (x_val, y_val), verbose = 1, callbacks = [early_stopping])
 
 #4. 평가
 loss, acc = model.evaluate(x_test, y_test)
@@ -77,17 +76,17 @@ print(np.argmax(y_pred, axis = 1))
 #실습2. predict 출력해볼것
 #y[-5:-1] = ??
 
-# loss :  0.1683250069618225
-# acc :  0.9890109896659851
+# loss :  0.16352708637714386
+# acc :  0.9912280440330505
 # [[0. 1.]
-#  [0. 1.]
 #  [1. 0.]
-#  [0. 1.]]
-# [[7.1000011e-07 9.9999928e-01]
-#  [8.5848988e-05 9.9991417e-01]
-#  [1.0000000e+00 0.0000000e+00]
-#  [1.6419766e-04 9.9983573e-01]]
-# [1 1 0 1]
+#  [0. 1.]
+#  [1. 0.]]
+# [[1.32189485e-11 1.00000000e+00]
+#  [9.99997735e-01 2.32061802e-06]
+#  [3.37641554e-10 1.00000000e+00]
+#  [1.00000000e+00 3.01527137e-10]]
+# [1 0 1 0]
 '''
 Breast cancer wisconsin (diagnostic) dataset
 --------------------------------------------
