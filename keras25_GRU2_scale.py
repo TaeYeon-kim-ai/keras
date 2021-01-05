@@ -29,7 +29,7 @@ model.summary()
 '''
 Layer (type)                 Output Shape              Param #
 =================================================================
-gru (GRU)                    (None, 13)                624           = GRU =  3 * (n + m + 1) * m  where 30??
+gru (GRU)                    (None, 13)                624           
 _________________________________________________________________             3 * (1 + 13 + 1) * 13  = 360 ????
 dense (Dense)                (None, 26)                364                    default activation = tanh
 _________________________________________________________________             input node에 3배도 더해주나?
@@ -44,6 +44,24 @@ dense_4 (Dense)              (None, 1)                 14
 Total params: 3,277
 Trainable params: 3,277
 Non-trainable params: 0
+
+= GRU =  3 * (n + m + 1) * m  where 30??         
+default activation = tanh
+input node에 3배도 더해주나?
+reset_after=True 때문 GUR에는 아래 코드가 있음
+tensorflow1.x 에서는 reset_after이 false지만
+tensorflow2.x 에서는 reset_after이 true임 지만....ㅜ
+
+if self.use_bias:
+    if not self.reset_after:
+        bias_shape = (3 * self.units,)
+    else:
+        # separate biases for input and recurrent kernels
+        # Note: the shape is intentionally different from CuDNNGRU biases
+        # `(2 * 3 * self.units,)`, so that we can distinguish the classes
+        # when loading and converting saved weights.
+        bias_shape = (2, 3 * self.units)
+
 '''
 #3.컴파일, 훈련
 from tensorflow.keras.callbacks import EarlyStopping 
