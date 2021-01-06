@@ -21,8 +21,8 @@ scaler = MinMaxScaler()
 scaler.fit(x)
 x_train = scaler.transform(x)#x_train에 trans
 
-# x = x.reshape(13,3,1)
-x_pred=x_pred.reshape(1,3)
+# x = x.reshape(13,3,1) LSTM 3차원으로 reshape 
+x_pred=x_pred.reshape(1,3) # perdict 출력 수 조정 DNN 2차원으로 reshape
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size = 0.8, shuffle = True, random_state = 2)
 x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, train_size = 0.8, shuffle = True, random_state = 2)
@@ -47,7 +47,7 @@ model.compile(loss = 'mse', optimizer = 'adam', metrics = ['acc'])
 model.fit(x_train, y_train, epochs = 1000, batch_size = 1, verbose = 1, validation_data = (x_val, y_val),callbacks = [early_stopping])
 
 #4. 평가, 예측
-loss = model.evaluate(x_train,y_train)
+loss = model.evaluate(x_test,y_test)
 print('loss : ', loss)
 
 y_predict = model.predict(x_pred)
@@ -62,5 +62,5 @@ print('result : ',y_predict)
 # loss :  [0.1634834110736847, 0.0] LSTM_seq
 # result :  [[80.04349]]
 
-# loss :  [0.7082670331001282, 0.0] DNN early_stopping 132 / patience = 30
-# result :  [[80.64098]]
+# loss :  [1.9020299911499023, 0.0] DNN early_stopping 102 / patience = 30
+# result :  [[79.991844]]
