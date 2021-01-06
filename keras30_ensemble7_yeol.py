@@ -30,6 +30,8 @@ print("y2 : shape", y2.shape) #(13,)
 
 x1 = x1.reshape(x1.shape[0], x1.shape[1], 1) #(13, 2, 1)
 x2 = x2.reshape(x2.shape[0], x2.shape[1], 1) #(13, 3, 1)
+# y1 = y1.reshape(y1.shape[0], y1.shape[1], 1) #(13, 2, 1)
+# y2 = y2.reshape(y2.shape[0], y2.shape[1], 1) #(13, 3, 1)
 
 #1. 데이터 전처리
 from sklearn.model_selection import train_test_split
@@ -81,7 +83,7 @@ model.summary()
 
 #컴파일, 훈련
 model.compile(loss = 'mse', optimizer = 'adam', metrics = ['acc'])
-model.fit([x1_test, x2_test], [y1_test, y2_test], epochs=50, batch_size=1, validation_split=0.2, verbose = 1)
+model.fit([x1_test, x2_test], [y1_test, y2_test], epochs=100, batch_size=1, validation_split=0.2, verbose = 1)
 
 #4. 평가, 예측
 loss = model.evaluate([x1_test, x2_test], [y1_test, y2_test])

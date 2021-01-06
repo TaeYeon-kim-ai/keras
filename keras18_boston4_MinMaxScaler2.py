@@ -17,7 +17,7 @@ print(y.shape) #(506,   )
 # X - 최소값 / 최대값 - 최소값
 print("===================")
 print(x[:5]) # 0~4
-print(y[:10]) 
+print(y[:10])
 print(np.max(x), np.min(x)) # max값 min값
 print(dataset.feature_names)
 #print(dataset.DESCR) #묘사
