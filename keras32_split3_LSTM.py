@@ -61,7 +61,6 @@ print(x_test.shape)  #(19,5)
 print(x_val.shape)   #(16,5)
 print(x_pred.shape)  #(5,5)
 
-
 x_train = x_train.reshape(x_train.shape[0],x_train.shape[1],1) #(95,5) => (95,5,1)
 x_test = x_test.reshape(x_test.shape[0],x_test.shape[1],1) #(95,5) => (95,5,1)
 x_val = x_val.reshape(x_val.shape[0],x_val.shape[1],1) #(95,5) => (95,5,1)

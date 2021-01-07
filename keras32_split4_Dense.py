@@ -33,8 +33,8 @@ dataset = split_x(a, size)
 x = dataset[:, :5]
 y = dataset[:, -1]
 dataset_pred = np.array(split_x(b, 6))  
-x_pred = dataset_pred[:, :5]
-y_pred = dataset_pred[ :,-1]
+x_pred = dataset_pred[:, :5] #전체에서 앞에서 5개자르기
+y_pred = dataset_pred[ :,-1] # 전체핼에서 가장 뒤에것 가져오기
 print(x_pred)
 print(y_pred)
 
