@@ -20,45 +20,35 @@ print(dataset.feature_names)
 #x = x / np.max(x)
 #print(np.max(x), np.min(x)) # 정규화
 
-x = x.reshape(x.shape[0], x.shape[1], 1, 1) #(442, 10, 1, 1)
-y = y.reshape(y.shape[0], 1, 1, 1) #(442, 1, 1, 1)
-
 #1_2. 데이터 전처리
 from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size = 0.8, shuffle = True, random_state = 66 )
-x_test, x_val, y_test, y_val = train_test_split(x_test, y_test, train_size= 0.8, shuffle = True, random_state = 66, )
+x_test, x_val, y_test, y_val = train_test_split(x_test, y_test, train_size= 0.8, shuffle = True, random_state = 66 )
 
-# from sklearn.preprocessing import MinMaxScaler
-# scaler = MinMaxScaler()
-# scaler.fit(x_train)
-# x_train = scaler.transform(x_train)
-# x_test = scaler.transform(x_test)
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+scaler.fit(x_train)
+x_train = scaler.transform(x_train)
+x_test = scaler.transform(x_test)
+x_val = scaler.transform(x_val)
 
 #2. 모델링
-from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout
 model = Sequential()
-model.add(Conv2D(filters = 100, kernel_size=(2,2), strides =1 ,padding = 'SAME', input_shape = (10, 1, 1))) 
-model.add(Conv2D(500, kernel_size=(2,2), padding = 'SAME'))
-model.add(Conv2D(200, kernel_size=(2,2), padding = 'SAME'))
-model.add(Conv2D(100, kernel_size=(2,2), padding = 'SAME'))
-model.add(Conv2D(100, kernel_size=(2,2), padding = 'SAME'))
-model.add(Conv2D(100, kernel_size=(2,2), padding = 'SAME'))
-model.add(Dense(50, activation= 'relu'))
-model.add(Dense(50, activation= 'relu'))
-model.add(Dense(40, activation= 'relu'))
-model.add(Dense(10, activation= 'relu'))
-# model.add(Dropout(0.2)), 
-model.add(Dense(1, activation= 'relu'))
+model.add(Dense(100, input_dim=10, activation = 'relu')) # 기본값 : activation='linear' 
+model.add(Dense(75, activation = 'relu'))
+model.add(Dense(50, activation = 'relu'))
+model.add(Dense(50, activation = 'relu'))
+model.add(Dense(50, activation = 'relu'))
+model.add(Dense(50, activation = 'relu'))
+model.add(Dense(1))
 
 #3. 컴파일, 훈련
-model.compile(loss = 'mse', optimizer = 'adam', metrics = ['mae'])
-'''
-EarlyStopping
-'''
-from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ModelCheckpoint
 early_stopping = EarlyStopping(monitor='loss', patience=20, mode='auto')
-model.fit(x_train, y_train, epochs=1000, batch_size=7, validation_data= (x_val, y_val), callbacks = [early_stopping])
+modelpath = './modelCheckpoint/k46_diabets_{epoch:02d}-{val_loss:.4f}.hdf5)'
+cp = ModelCheckpoint(filepath= modelpath, monitor= 'val_loss', save_best_only=True, mode = 'auto')
+model.compile(loss = 'mse', optimizer = 'adam', metrics = ['mae'])
+hist = model.fit(x_train, y_train, epochs=1000, batch_size=7, validation_data= (x_val, y_val), callbacks = [early_stopping, cp])
 
 #4. 평가, 예측
 loss, mae = model.evaluate(x_test, y_test)
@@ -67,15 +57,43 @@ print("mae : ", mae)
 
 y_predict = model.predict(x_test)
 
-# #RMSE
-# from sklearn.metrics import mean_squared_error
-# def RMSE(y_test, y_predict) :
-#     return np.sqrt(mean_squared_error(y_test, y_predict))
-# print("RMSE : ", RMSE(y_test, y_predict))
+#RMSE
+from sklearn.metrics import mean_squared_error
+def RMSE(y_test, y_predict) :
+    return np.sqrt(mean_squared_error(y_test, y_predict))
+print("RMSE : ", RMSE(y_test, y_predict))
 
-# from sklearn.metrics import r2_score
-# r2 = r2_score(y_test, y_predict)
-# print("R2 : ", r2)
+from sklearn.metrics import r2_score
+r2 = r2_score(y_test, y_predict)
+print("R2 : ", r2)
+
+# 시각화
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(10,6))
+
+plt.subplot(2,1,1)
+plt.plot(hist.history['loss'], marker = '.', c = 'red', label = 'loss')
+plt.plot(hist.history['val_loss'], marker = '.', c='blue', label = 'val_loss')
+plt.grid()
+
+plt.title('cost_loss') #loss, cost
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(loc = 'upper right')
+
+
+plt.subplot(2,1,2)
+plt.plot(hist.history['mae'], marker = '.', c = 'red', label = 'mae')
+plt.plot(hist.history['val_mae'], marker = '.', c = 'blue', label = 'val_mae')
+plt.grid()
+
+plt.title('cost_mae')
+plt.ylabel('mae')
+plt.xlabel('epoch')
+plt.legend(loc = 'upper right')
+
+plt.show()
 
 """
 **Data Set Characteristics:**
@@ -131,6 +149,11 @@ y_predict = model.predict(x_test)
 # RMSE :  7.596591897809446
 # R2 :  0.991656001135139 ---??? 뭔가잘못된
 
+# loss :  6289.3251953125
+# mae :  61.01411056518555
+# RMSE :  79.30526597416562
+# R2 :  0.0906298458745074
+
 #model = Sequential()
 # model.add(Dense(100, input_dim=10, activation = 'relu')) # 기본값 : activation='linear' 
 # model.add(Dense(75, activation = 'relu'))
@@ -139,7 +162,3 @@ y_predict = model.predict(x_test)
 # model.add(Dense(50, activation = 'relu'))
 # model.add(Dense(50, activation = 'relu'))
 # model.add(Dense(1))
-
-#CNN 적용
-# loss :  6237.07470703125
-# mae :  66.48683166503906

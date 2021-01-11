@@ -7,8 +7,8 @@ print(dataset.feature_names)
 
 x = dataset.data
 y = dataset.target
-# print(x)
-# print(y)
+print(x)
+print(y)
 print(x.shape) # (178, 13)
 print(y.shape) # (178,)
 
@@ -18,12 +18,9 @@ one = OneHotEncoder()
 y = y.reshape(-1,1)                 #. y_train => 2D
 one.fit(y)                          #. Set
 y = one.transform(y).toarray()      #. transform
-# print(y)
+print(y)
 print(x.shape) #(178, 13)
-print(y.shape) #(178,3)
-
-x = x.reshape(x.shape[0], x.shape[1], 1, 1) #(178, 13, 1, 1)
-y = y.reshape(y.shape[0], y.shape[1], 1, 1) #(178, 3, 1, 1)
+print(y.shape) #(178,)
 
 from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size = 0.8, shuffle = True, random_state = 66)
@@ -36,29 +33,28 @@ x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
 x_val = scaler.transform(x_val)
 
+
 #2. 모델링
 from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout
-model = Sequential()
-model.add(Conv2D(filters = 100, kernel_size=(2,2), strides =1 ,padding = 'SAME', input_shape = (13, 1, 1))) 
-model.add(Conv2D(500, kernel_size=(2,2), padding = 'SAME'))
-model.add(Conv2D(200, kernel_size=(2,2), padding = 'SAME'))
-model.add(Conv2D(100, kernel_size=(2,2), padding = 'SAME'))
-model.add(Conv2D(100, kernel_size=(2,2), padding = 'SAME'))
-model.add(Conv2D(100, kernel_size=(2,2), padding = 'SAME'))
-model.add(Dense(50, activation= 'relu'))
-model.add(Dense(50, activation= 'relu'))
-model.add(Dense(40, activation= 'relu'))
-model.add(Dense(10, activation= 'relu'))
-model.add(Dense(3, activation= 'softmax'))
+from tensorflow.keras.layers import Dense, Input, LSTM
+input1 = Input(shape = (13,)) 
+dense1 = Dense(200, activation='relu')(input1)
+dense2 = Dense(60, activation='relu')(dense1)
+dense3 = Dense(120, activation='relu')(dense2)
+dense4 = Dense(90, activation='relu')(dense3)
+dense5 = Dense(70, activation='relu')(dense4)
+outputs = Dense(3, activation='softmax')(dense5) #원핫인코더한 수와 동일
+model = Model(inputs = input1, outputs = outputs)
 model.summary()
 
 #3. 컴파일,
 #다중분류일 경우 : 
-from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+modelpath = './modelCheckpoint/k46_wine_{epoch:02d}-{val_loss:.4f}.hdf5'
+cp = ModelCheckpoint(filepath= modelpath, monitor='val_loss', save_best_only=True, mode='auto')
 early_stopping = EarlyStopping(monitor = 'loss', patience = 20, mode = 'auto')
 model.compile(loss = 'categorical_crossentropy', optimizer = 'adam', metrics = ['acc'])
-model.fit(x_train, y_train, epochs = 500, batch_size = 7, validation_data = (x_val, y_val), verbose = 1 ,callbacks = [early_stopping])
+hist = model.fit(x_train, y_train, epochs = 500, batch_size = 7, validation_data = (x_val, y_val), verbose = 1 ,callbacks = [early_stopping, cp])
 
 #4. 평가
 loss, acc = model.evaluate(x_test, y_test)
@@ -74,6 +70,35 @@ print(y_train[-5:-1])
 print(np.argmax(y_pred, axis = -1))
 #print(np.argmax(y_pred, axis = 2)) 
 
+# 시각화
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(10,6))
+
+plt.subplot(2,1,1)
+plt.plot(hist.history['loss'], marker = '.', c = 'red', label = 'loss')
+plt.plot(hist.history['val_loss'], marker = '.', c='blue', label = 'val_loss')
+plt.grid()
+
+plt.title('cost_loss') #loss, cost
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(loc = 'upper right')
+
+
+plt.subplot(2,1,2)
+plt.plot(hist.history['acc'], marker = '.', c = 'red', label = 'acc')
+plt.plot(hist.history['val_acc'], marker = '.', c = 'blue', label = 'val_acc')
+plt.grid()
+
+plt.title('cost_mae')
+plt.ylabel('mae')
+plt.xlabel('epoch')
+plt.legend(loc = 'upper right')
+
+plt.show()
+
+
 # loss :  1.943482129718177e-05
 # acc :  1.0
 # [[1.0000000e+00 2.2382447e-09 1.4489170e-09]
@@ -85,4 +110,5 @@ print(np.argmax(y_pred, axis = -1))
 #  [0. 0. 1.]
 #  [0. 1. 0.]]
 # [0 1 2 1]
+
 

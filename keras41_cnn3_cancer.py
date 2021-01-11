@@ -48,7 +48,7 @@ model.add(Dense(50, activation= 'relu'))
 model.add(Dense(40, activation= 'relu'))
 model.add(Dense(10, activation= 'relu'))
 # model.add(Dropout(0.2)), 
-model.add(Dense(1, activation= 'relu'))
+model.add(Dense(1, activation= 'sigmoid'))
 
 # model = Sequential()
 # model.add(Dense(1, activation='relu', input_shape=(30,)))
@@ -61,7 +61,7 @@ early_stopping = EarlyStopping(monitor = 'acc', patience = 30, mode = 'auto')
 model.compile(loss = 'binary_crossentropy', optimizer = 'adam', metrics = ['acc'])
 #이진분류 일때는 무조건 binary_crossentropy
 #model.compile(loss = 'mse', optimizer = 'adam', metrics = ['acc'])
-model.fit(x_train, y_train, epochs = 500, batch_size = 32 ,validation_data = (x_val, y_val), verbose = 1, callbacks = [early_stopping])
+model.fit(x_train, y_train, epochs = 500, batch_size = 64 ,validation_data = (x_val, y_val), verbose = 1, callbacks = [early_stopping])
 
 #4. 평가
 loss, acc = model.evaluate(x_test, y_test)

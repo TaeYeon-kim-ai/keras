@@ -56,23 +56,21 @@ model.add(Conv2D(100, kernel_size=(3,3), padding = 'SAME'))
 model.add(Dropout(0.2))
 
 model.add(Flatten())
-model.add(Dense(200, activation= 'relu'))
-model.add(Dense(150, activation= 'relu'))
-model.add(Dense(150, activation= 'relu'))
-model.add(Dense(150, activation= 'relu'))
-model.add(Dense(150, activation= 'relu'))
-model.add(Dense(150, activation= 'relu'))
-model.add(Dense(100, activation= 'relu'))
-model.add(Dense(100, activation= 'relu'))
-model.add(Dense(100, activation= 'relu'))
-model.add(Dense(50, activation= 'relu'))
+model.add(Dense(64, activation= 'relu'))
+model.add(Dense(32, activation= 'relu'))
+model.add(Dense(32, activation= 'relu'))
+model.add(Dense(16, activation= 'relu'))
 model.add(Dense(10, activation= 'softmax'))
 
 #3. 컴파일, 훈련
-from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 early_stopping = EarlyStopping(monitor = 'loss', patience = 5, mode = 'auto')
+modelpath = './modelCheckpoint/k45_mnist_{epoch:02d}-{val_loss:.4f}.hdf5'     
+# k45_mnist_37_0100(0.0100).hdf5
+cp = ModelCheckpoint(filepath= modelpath , monitor='val_loss', save_best_only=True, mode = 'auto')
+#filepath='(경로)' : 가중치를 세이브 해주는 루트
 model.compile(loss = 'categorical_crossentropy', optimizer = 'adam', metrics = ['acc'])
-model.fit(x_train, y_train, epochs = 5, batch_size = 64, validation_split=0.2, verbose = 1 ,callbacks = [early_stopping])
+hist = model.fit(x_train, y_train, epochs = 5, batch_size = 64, validation_split=0.2, verbose = 1 ,callbacks = [early_stopping, cp])
 
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -82,6 +80,35 @@ y_pred = model.predict(x_test[:10])
 print(y_pred)
 print(y_test[:10])
 print(np.argmax(y_test[:10], axis=-1))
+
+# 시각화
+import  matplotlib.pyplot as plt
+
+
+plt.figure(fihsize = (10,6))
+
+plt.subplot(2,1,1) #2행 1열 중 첫번때
+plt.plot(hist.history['loss'], marker = '.', c='red', label = 'loss')
+plt.plot(hist.history['val_loss'], marker = '.', c='blue', label = 'val_loss')
+plt.grid()
+
+plt.title('cost_loss') #loss,cost #타이틀깨진것 한글처리 해둘 것
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(loc = 'upper right')
+
+
+plt.subplot(2,1,2) #2행 2열중 2번째
+plt.plot(hist.history['acc'], marker = '.', c='red', label = 'loss')
+plt.plot(hist.history['val_acc'], marker = '.', c='blue', label = 'val_acc')
+plt.grid() #그래프 격자(모눈종이 형태)
+
+plt.title('cost_acc')  #타이틀깨진것 한글처리 해둘 것
+plt.ylabel('acc')
+plt.xlabel('epoch')
+plt.legend(loc = 'upper right')
+
+plt.show()
 
 # loss :  [0.0957411602139473, 0.975600004196167]
 # [[2.3473370e-13 3.5473342e-08 3.1223895e-08 4.7982365e-07 1.3058732e-11

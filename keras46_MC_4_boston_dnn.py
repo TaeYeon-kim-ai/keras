@@ -2,8 +2,6 @@
 #실습:모델구성
 import numpy as np
 from sklearn.datasets import load_boston
-from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Dense, Input
 
 #1. 데이터
 dataset = load_boston()
@@ -15,11 +13,11 @@ print(y.shape) #(506,   )
 #1_2. 데이터 전처리(MinMaxScalar)
 #ex 0~711 = 최댓값으로 나눈다  0~711/711
 # X - 최소값 / 최대값 - 최소값
-print("===================")
-print(x[:5]) # 0~4
-print(y[:10]) 
-print(np.max(x), np.min(x)) # max값 min값
-print(dataset.feature_names)
+# print("===================")
+# print(x[:5]) # 0~4
+# print(y[:10]) 
+# print(np.max(x), np.min(x)) # max값 min값
+# print(dataset.feature_names)
 #print(dataset.DESCR) #묘사
 '''
 #x = x /711
@@ -33,29 +31,44 @@ x = scaler.transform(x)
 
 from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffle=True, random_state= 66) #random_state 랜덤변수 고정 
-x_test, x_val, y_test, y_val = train_test_split(x_test, y_test, test_size=0.5, random_state=66, shuffle=True)
+x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, train_size=0.8, random_state=66, shuffle=True)
 
 from sklearn.preprocessing import MinMaxScaler
 scaler = MinMaxScaler()
 scaler.fit(x_train)
 x_tranin = scaler.transform(x_train) #x_train만 trans 후 바뀐수치 x_train에 다시넣기
 x_test = scaler.transform(x_test) #x_test 따로 trans  후 바뀐수치 x_test에 다시넣기
+x_val = scaler.transform(x_val)
 
-print(x_train.shape, y_train.shape, x_test.shape, y_test.shape, x_val.shape, y_val.shape)
-'''
+#print(x_train.shape, y_train.shape, x_test.shape, y_test.shape, x_val.shape, y_val.shape)
+#(323, 13) (323,) (102, 13) (102,) (81, 13) (81,)
 #2. 모델링
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.layers import Dense, Input, Dropout
 input1 = Input(shape=(13,))
-dense1 = Dense(36, activation='relu')(input1)
-dense2 = Dense(40, activation='relu')(dense1) 
-dense3 = Dense(40, activation='relu')(dense2)
-dense4 = Dense(40, activation='relu')(dense3)
-outputs = Dense(1)(dense4)
+dense1 = Dense(64, activation='relu')(input1)
+dense1 = Dropout(0.4)(dense1) 
+dense1 = Dense(64, activation='relu')(input1)
+dense1 = Dropout(0.4)(dense1) 
+dense1 = Dense(32, activation='relu')(dense1)
+dense1 = Dropout(0.2)(dense1) 
+dense1 = Dense(32, activation='relu')(dense1) 
+dense1 = Dropout(0.2)(dense1) 
+dense1 = Dense(32, activation='relu')(dense1) 
+dense1 = Dropout(0.2)(dense1)
+dense1 = Dense(8, activation='relu')(dense1) 
+outputs = Dense(1)(dense1)
 model = Model(inputs = input1, outputs = outputs)
 model.summary()
 
 #3. 컴파일, 훈련
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, TensorBoard
+early_stopping = EarlyStopping(monitor='loss', patience=20, mode = 'auto')
+modelpath = './modelCheckpoint/k46_boston_{epoch:02d}-{val_loss:.4f}.hdf5'
+cp = ModelCheckpoint(filepath= modelpath, monitor='val_loss', save_best_only=True, mode = 'auto')
+tb = TensorBoard(log_dir='./graph', histogram_freq = 0, write_graph=True, write_images=True) #그림출력 /graph폴더에 저장
 model.compile(loss = 'mse', optimizer='adam', metrics = ['mae'])
-model.fit(x_test, y_test, epochs=100, batch_size=6, validation_data= (x_val, y_val))
+hist = model.fit(x_train, y_train, epochs=1000, batch_size=6, validation_data= (x_val, y_val), callbacks = [early_stopping, cp, tb])
 
 #4. 평가, 예측
 loss, mae = model.evaluate(x_test, y_test)
@@ -63,7 +76,7 @@ print("loss : ", loss)
 print("mae : ", mae)
 
 y_predict = model.predict(x_test) 
-#print(y_predict)
+
 
 #RMSE 구하기
 from sklearn.metrics import mean_squared_error
@@ -71,9 +84,43 @@ def RMSE(y_test, y_predict) :
     return np.sqrt(mean_squared_error(y_test, y_predict))  #sqrt는 루트
 print("RMSE :" , RMSE(y_test, y_predict))
 
+#R2
 from sklearn.metrics import r2_score
 r2 = r2_score(y_test, y_predict)
 print("R2 : ", r2 )
+
+
+# 시각화
+import matplotlib.pyplot as plt
+# import matplotlib
+# matplotlib.rcParams['axes.unicode_minus'] = False 
+# matplotlib.rcParams['font.family'] = "Malgun Gothic"
+plt.rc('font', family='Malgun Gothic')
+
+plt.figure(figsize=(10,10))
+
+plt.subplot(2,1,1)
+plt.plot(hist.history['loss'], marker = '.', c = 'red', label = 'loss')
+plt.plot(hist.history['val_loss'], marker = '.', c='blue', label = 'val_loss')
+plt.grid()
+
+plt.title('손실비용') #loss, cost
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(loc = 'upper right')
+
+
+plt.subplot(2,1,2)
+plt.plot(hist.history['mae'], marker = '.', c = 'red', label = 'mae')
+plt.plot(hist.history['val_mae'], marker = '.', c = 'blue', label = 'val_mae')
+plt.grid()
+
+plt.title('정확도')
+plt.ylabel('mae')
+plt.xlabel('epoch')
+plt.legend(loc = 'upper right')
+plt.show()
+
 
 #전처리 전
 # loss :  16.55705451965332
@@ -119,4 +166,3 @@ print("R2 : ", r2 )
         - LSTAT    % lower status of the population
         - MEDV     Median value of owner-occupied homes in $1000's
 """
-'''
