@@ -65,3 +65,9 @@ y_pred = model.predict(x_test[:10])
 print(y_pred)
 print(y_test[:10])
 print(np.argmax(y_test[:10], axis=-1))
+
+# 625/625 [==============================] - 7s 12ms/step - loss: 3.3130 - acc: 0.1973 - val_loss: 5.4001 - val_acc: 0.0097
+# 313/313 [==============================] - 1s 3ms/step - loss: 5.3848 - acc: 0.0100
+# loss :  [5.3847832679748535, 0.009999999776482582]??
+# y_pred : [31 31 31 31 31]
+# y_test : [49 33 72 51 71]

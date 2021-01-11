@@ -43,7 +43,7 @@ dense2 = Dense(20, activation='relu')(dense1)
 dense3 = Dense(20, activation='relu')(dense2)
 dense4 = Dense(20, activation='relu')(dense3)
 dense5 = Dense(20, activation='relu')(dense4)
-outputs = Dense(2, activation='softmax')(dense5)
+outputs = Dense(2, activation='sigmoid')(dense5)
 model = Model(inputs = input1, outputs = outputs)
 model.summary()
 
@@ -60,14 +60,14 @@ early_stopping = EarlyStopping(monitor = 'loss', patience = 20, mode = 'auto')
 modelpath = './modelCheckpoint/k46_cancer_{epoch:02d}-{val_loss:.4f}.hdf5'
 cp = ModelCheckpoint(filepath= modelpath, monitor='val_loss', save_best_only=True, mode = 'auto')
 model.compile(loss = 'categorical_crossentropy', optimizer = 'adam', metrics = ['acc'])
-hist = model.fit(x_train, y_train, epochs = 1000, batch_size = 7 ,validation_data = (x_val, y_val), verbose = 1, callbacks = [early_stopping])
+hist = model.fit(x_train, y_train, epochs = 1000, batch_size = 7 ,validation_data = (x_val, y_val), verbose = 1, callbacks = [early_stopping, cp])
 
 #4. 평가
 loss, acc = model.evaluate(x_test, y_test)
 print('loss : ', loss)
 print('acc : ', acc)
 
-y_pred = model.predict(x_train[-5:-1])
+y_pred = model.predict(x_test[-5:-1])
 print(y_train[-5:-1])
 print(y_pred)
 
@@ -108,14 +108,14 @@ plt.show()
 #실습2. predict 출력해볼것
 #y[-5:-1] = ??
 
-# loss :  0.16352708637714386
-# acc :  0.9912280440330505
+# loss :  0.15305033326148987
+# acc :  0.9824561476707458
 # [[0. 1.]
 #  [1. 0.]
 #  [0. 1.]
 #  [1. 0.]]
-# [[1.32189485e-11 1.00000000e+00]
-#  [9.99997735e-01 2.32061802e-06]
-#  [3.37641554e-10 1.00000000e+00]
-#  [1.00000000e+00 3.01527137e-10]]
-# [1 0 1 0]
+# [[5.0966210e-12 9.9989939e-01]
+#  [8.5732776e-01 1.3080690e-09]
+#  [6.4385594e-11 9.9974132e-01]
+#  [4.7192850e-10 9.9754477e-01]]
+# [1 0 1 1]

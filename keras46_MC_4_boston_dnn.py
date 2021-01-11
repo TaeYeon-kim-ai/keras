@@ -33,12 +33,12 @@ from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffle=True, random_state= 66) #random_state 랜덤변수 고정 
 x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, train_size=0.8, random_state=66, shuffle=True)
 
-from sklearn.preprocessing import MinMaxScaler
-scaler = MinMaxScaler()
-scaler.fit(x_train)
-x_tranin = scaler.transform(x_train) #x_train만 trans 후 바뀐수치 x_train에 다시넣기
-x_test = scaler.transform(x_test) #x_test 따로 trans  후 바뀐수치 x_test에 다시넣기
-x_val = scaler.transform(x_val)
+# from sklearn.preprocessing import MinMaxScaler
+# scaler = MinMaxScaler()
+# scaler.fit(x_train)
+# x_tranin = scaler.transform(x_train) #x_train만 trans 후 바뀐수치 x_train에 다시넣기
+# x_test = scaler.transform(x_test) #x_test 따로 trans  후 바뀐수치 x_test에 다시넣기
+# x_val = scaler.transform(x_val)
 
 #print(x_train.shape, y_train.shape, x_test.shape, y_test.shape, x_val.shape, y_val.shape)
 #(323, 13) (323,) (102, 13) (102,) (81, 13) (81,)
@@ -46,24 +46,22 @@ x_val = scaler.transform(x_val)
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, Input, Dropout
 input1 = Input(shape=(13,))
-dense1 = Dense(64, activation='relu')(input1)
-dense1 = Dropout(0.4)(dense1) 
-dense1 = Dense(64, activation='relu')(input1)
-dense1 = Dropout(0.4)(dense1) 
-dense1 = Dense(32, activation='relu')(dense1)
-dense1 = Dropout(0.2)(dense1) 
+dense1 = Dense(150, activation='relu')(input1)
+dense1 = Dropout(0.05)(dense1)
+dense1 = Dense(130, activation='relu')(input1)
+dense1 = Dropout(0.03)(dense1)
+dense1 = Dense(64, activation='relu')(dense1)
+dense1 = Dense(64, activation='relu')(dense1)
+dense1 = Dense(64, activation='relu')(dense1)
 dense1 = Dense(32, activation='relu')(dense1) 
-dense1 = Dropout(0.2)(dense1) 
 dense1 = Dense(32, activation='relu')(dense1) 
-dense1 = Dropout(0.2)(dense1)
-dense1 = Dense(8, activation='relu')(dense1) 
 outputs = Dense(1)(dense1)
 model = Model(inputs = input1, outputs = outputs)
 model.summary()
 
 #3. 컴파일, 훈련
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, TensorBoard
-early_stopping = EarlyStopping(monitor='loss', patience=20, mode = 'auto')
+early_stopping = EarlyStopping(monitor='loss', patience=30, mode = 'auto')
 modelpath = './modelCheckpoint/k46_boston_{epoch:02d}-{val_loss:.4f}.hdf5'
 cp = ModelCheckpoint(filepath= modelpath, monitor='val_loss', save_best_only=True, mode = 'auto')
 tb = TensorBoard(log_dir='./graph', histogram_freq = 0, write_graph=True, write_images=True) #그림출력 /graph폴더에 저장
@@ -145,6 +143,11 @@ plt.show()
 # mae :  1.7919334173202515
 # RMSE : 2.3334145056348183
 # R2 :  0.9430991642272919
+
+# loss :  10.888834953308105
+# mae :  2.4144272804260254
+# RMSE : 3.299823642181916
+# R2 :  0.8697241755661469
 
 """
 #전처리가 된 데이터(정규화)
