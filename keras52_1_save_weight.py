@@ -65,7 +65,7 @@ modelpath = '../data/modelCheckpoint/k52_1_MCK.h5_{epoch:02d}-{val_loss:.4f}.hdf
 cp = ModelCheckpoint(filepath= modelpath , monitor='val_loss', save_best_only=True, mode = 'auto')
 #filepath='(경로)' : 가중치를 세이브 해주는 루트
 model.compile(loss = 'categorical_crossentropy', optimizer = 'adam', metrics = ['acc'])
-hist = model.fit(x_train, y_train, epochs = 5, batch_size = 64, validation_split=0.2, verbose = 1 ,callbacks = [early_stopping, cp])
+model.fit(x_train, y_train, epochs = 5, batch_size = 64, validation_split=0.2, verbose = 1 ,callbacks = [early_stopping, cp])
 
 model.save('../data/h5/k52_1_model2.h5')
 model.save_weights('../data/h5/k52_1_weight.h5')
@@ -78,35 +78,6 @@ y_pred = model.predict(x_test[:10])
 print(y_pred)
 print(y_test[:10])
 print(np.argmax(y_test[:10], axis=-1))
-
-# 시각화
-import  matplotlib.pyplot as plt
-
-
-plt.figure(figsize = (10,10))
-
-plt.subplot(2,1,1) #2행 1열 중 첫번때
-plt.plot(hist.history['loss'], marker = '.', c='red', label = 'loss')
-plt.plot(hist.history['val_loss'], marker = '.', c='blue', label = 'val_loss')
-plt.grid()
-
-plt.title('cost_loss') #loss,cost #타이틀깨진것 한글처리 해둘 것
-plt.ylabel('loss')
-plt.xlabel('epoch')
-plt.legend(loc = 'upper right')
-
-
-plt.subplot(2,1,2) #2행 2열중 2번째
-plt.plot(hist.history['acc'], marker = '.', c='red')
-plt.plot(hist.history['val_acc'], marker = '.', c='blue')
-plt.grid() #그래프 격자(모눈종이 형태)
-
-plt.title('cost_acc')  #타이틀깨진것 한글처리 해둘 것
-plt.ylabel('acc')
-plt.xlabel('epoch')
-plt.legend(['acc', 'val_acc'])
-
-plt.show()
 
 # loss :  [0.33037903904914856, 0.8847000002861023]
 # [9 2 1 1 6 1 4 6 5 7]
