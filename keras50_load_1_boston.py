@@ -1,12 +1,12 @@
 #보스턴 집값
 #실습:모델구성
 import numpy as np
-from sklearn.datasets import load_boston
+x_data = np.load('../data/npy/boston_x.npy')
+y_data = np.load('../data/npy/boston_y.npy')
 
 #1. 데이터
-dataset = load_boston()
-x = dataset.data
-y = dataset.target
+x = x_data
+y = y_data
 print(x.shape) #(506, 13)
 print(y.shape) #(506,   )
 

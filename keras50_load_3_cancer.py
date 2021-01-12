@@ -1,16 +1,15 @@
 #keras21_cancer1.py를 다중분류로 코딩하시오
 
 import numpy as np
-from sklearn.datasets import load_breast_cancer
+x_data = np.load('../data/npy/diabets_x.npy')
+y_data = np.load('../data/npy/diabets_y.npy')
 
 #1. 데이터
-datasets = load_breast_cancer()
+print(x_data.DESCR)
+print(x_data.feature_names) # 데이터셋 컬럼명 확인
 
-print(datasets.DESCR)
-print(datasets.feature_names) # 데이터셋 컬럼명 확인
-
-x = datasets.data
-y = datasets.target
+x = x_data
+y = y_data
 print(x.shape) #(569, 30)
 print(y.shape) #(569,)
 print(x[:5])

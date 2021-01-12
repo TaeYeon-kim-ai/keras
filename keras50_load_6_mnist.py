@@ -1,10 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from tensorflow.keras.datasets import fashion_mnist
+x_train = np.load('../data/npy/mnist_x_train.npy')
+y_train = np.load('../data/npy/mnist_y_train.npy')
+x_test = np.load('../data/npy/mnist_x_test.npy')
+y_test = np.load('../data/npy/mnist_y_test.npy')
 
 #1. 데이터
-(x_train, y_train), (x_test, y_test) =  fashion_mnist.load_data()
 
 print(x_train.shape, y_train.shape) #(60000, 28, 28) (60000,) #1생략 흑백
 print(x_test.shape, y_test.shape)   #(10000, 28, 28) (10000,) #1생략 흑백
@@ -63,15 +65,14 @@ model.add(Dense(16, activation= 'relu'))
 model.add(Dense(10, activation= 'softmax'))
 
 #3. 컴파일, 훈련
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, TensorBoard
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 early_stopping = EarlyStopping(monitor = 'loss', patience = 5, mode = 'auto')
 modelpath = '../data/modelCheckpoint/k45_mnist_{epoch:02d}-{val_loss:.4f}.hdf5'     
 # k45_mnist_37_0100(0.0100).hdf5
 cp = ModelCheckpoint(filepath= modelpath , monitor='val_loss', save_best_only=True, mode = 'auto')
 #filepath='(경로)' : 가중치를 세이브 해주는 루트
-tb = TensorBoard(log_dir='../data/graph', histogram_freq=0, write_graph=True, write_images=True) #그림출력 /graph폴더에 저장
 model.compile(loss = 'categorical_crossentropy', optimizer = 'adam', metrics = ['acc'])
-hist = model.fit(x_train, y_train, epochs = 5, batch_size = 64, validation_split=0.2, verbose = 1 ,callbacks = [early_stopping, cp, tb])
+hist = model.fit(x_train, y_train, epochs = 5, batch_size = 64, validation_split=0.2, verbose = 1 ,callbacks = [early_stopping, cp])
 
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test)

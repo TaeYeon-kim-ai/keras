@@ -1,8 +1,10 @@
 import numpy as np
 
 #1. 데이터
-from tensorflow.keras.datasets import cifar100
-(x_train, y_train), (x_test, y_test) = cifar100.load_data()
+x_train = np.load('../data/npy/cifar100_x_train.npy')
+y_train = np.load('../data/npy/cifar100_y_train.npy')
+x_test = np.load('../data/npy/cifar100_x_test.npy')
+y_test = np.load('../data/npy/cifar100_y_test.npy')
 
 print(x_train.shape, y_train.shape) #(50000, 32, 32, 3) (50000, 1)
 print(x_test.shape, y_test.shape) #(10000, 32, 32, 3) (10000, 1)
@@ -12,11 +14,6 @@ print(y_train[0])
 
 print('y_train[0]', y_train[0])
 print(x_train[0].shape)
-
-#1.1 데이터 전처리
-# x_train = x_train.reshape(x_train.shape[0], x_train.shape[1], x_train.shape[2], x_train.shape[3])
-# x_test = x_test.reshape(x_test.shape[0], x_test.shape[1], x_test.shape[2], x_test.shape[3])
-
 
 from sklearn.model_selection import train_test_split
 x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, train_size=0.8, random_state=66)

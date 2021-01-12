@@ -5,8 +5,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 #1. 데이터
-from tensorflow.keras.datasets import fashion_mnist
-(x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
+x_train = np.load('../data/npy/fashion_mnist_x_train.npy')
+y_train = np.load('../data/npy/fashion_mnist_y_train.npy')
+x_test = np.load('../data/npy/fashion_mnist_x_test.npy')
+y_test = np.load('../data/npy/fashion_mnist_y_test.npy')
 
 print(x_train.shape, y_train.shape)
 print(x_test.shape, y_test.shape)

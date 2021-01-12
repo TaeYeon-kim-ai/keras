@@ -1,12 +1,10 @@
 import numpy as np
-from sklearn.datasets import load_wine
 
-dataset = load_wine()
-print(dataset.DESCR)
-print(dataset.feature_names)
+x_data = np.load('../data/npy/wine_x.npy')
+y_data = np.load('../data/npy/wine_y.npy')
 
-x = dataset.data
-y = dataset.target
+x = x_data
+y = y_data
 print(x)
 print(y)
 print(x.shape) # (178, 13)

@@ -1,20 +1,20 @@
 #실습 : 19_1, 2, 3, 4, 5, EarlyStopping까지 총 6개의 파일을 완성하시오.
 
 import numpy as np
-from sklearn.datasets import load_diabetes
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, Input
 
+x_data = np.load('../data/npy/diabets_x.npy')
+y_data = np.load('../data/npy/diabets_y.npy')
+
 #1. 데이터 
-dataset = load_diabetes()
-x = dataset.data
-y = dataset.target
+x = x_data
+y = y_data
 
 print(x[:5])
 print(y[:10])
 print(x.shape, y.shape) #(442, 10) (442,)
 print(np.max(x), np.min(x))
-print(dataset.feature_names)
 #print(dataset.DESCR)
 
 #x = x / np.max(x)

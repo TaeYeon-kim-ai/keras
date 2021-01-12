@@ -1,12 +1,15 @@
 import numpy as np
-from sklearn.datasets import load_iris
+#데이터 불러오기
+x_data = np.load('../data/npy/iris_x.npy')
+y_data = np.load('../data/npy/iris_y.npy')
 
-#1. 데이터
-# x, y = load_iris(return_X_y=True)
+print(x_data)
+print(y_data)
+print(x_data.shape)
+print(y_data.shape)
 
-dataset = load_iris()
-x = dataset.data
-y = dataset.target
+x = x_data
+y = y_data
 # print(dataset.DESCR)
 # print(dataset.feature_names)
 # print(x.shape) #(150, 4)
@@ -117,36 +120,3 @@ plt.show()
 #  [0. 0. 1.]
 #  [0. 0. 1.]]
 # [2 0 0 2]
-
-'''
-** 데이터 세트 특성 : **
-
-    : 인스턴스 수 : 150 개 (3 개 클래스 각각 50 개)
-    : 속성 수 : 4 개의 숫자, 예측 속성 및 클래스
-    : 속성 정보 :
-        -꽃받침 길이 (cm)
-        -꽃받침 너비 (cm)
-        -꽃잎 길이 (cm)
-        -꽃잎 너비 (cm)
-        - 수업:
-                -아이리스-세토 사
-                -Iris-Versicolour
-                -Iris-Virginica
-
-    : 요약 통계 :
-
-    ============== ==== ==== ======= ===== ================ ====
-                    최소 최대 평균 SD 클래스 상관 관계
-    ============== ==== ==== ======= ===== ================ ====
-    꽃받침 길이 : 4.3 7.9 5.84 0.83 0.7826
-    꽃받침 너비 : 2.0 4.4 3.05 0.43 -0.4194
-    꽃잎 길이 : 1.0 6.9 3.76 1.76 0.9490 (높음!)
-    꽃잎 폭 : 0.1 2.5 1.20 0.76 0.9565 (높음!)
-    ============== ==== ==== ======= ===== ================ ====
-
-    : 속성 값 누락 : 없음
-    : 계급 분포 : 3 개 계급 각각 33.3 %.
-    : 크리에이터 : R.A. 어부
-    : 기부 : Michael Marshall (MARSHALL%PLU@io.arc.nasa.gov)
-    : 날짜 : 1988 년 7 월
-'''

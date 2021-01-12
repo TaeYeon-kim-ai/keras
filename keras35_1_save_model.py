@@ -21,7 +21,7 @@ model.add(Dense(1))
 model.summary()
 
 #모델저장
-model.save("./model/save_keras35.h5")
-model.save(".//model//save_keras35_1.h5")
-model.save(".\model\save_keras35_2.h5")
-model.save(".\\model/\\save_keras35_3.h5")
+model.save("../Data/h5/save_keras35.h5")
+model.save("..//Data//h5//save_keras35_1.h5")
+model.save("..\Data\h5\save_keras35_2.h5")
+model.save("..\\Data\\h5\\save_keras35_3.h5")

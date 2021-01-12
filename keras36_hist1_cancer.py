@@ -46,7 +46,7 @@ dense2 = Dense(20, activation='relu')(dense1)
 dense3 = Dense(20, activation='relu')(dense2)
 dense4 = Dense(20, activation='relu')(dense3)
 dense5 = Dense(20, activation='relu')(dense4)
-outputs = Dense(2, activation='softmax')(dense5)
+outputs = Dense(2, activation='sigmoid')(dense5)
 model = Model(inputs = input1, outputs = outputs)
 model.summary()
 

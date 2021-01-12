@@ -1,8 +1,10 @@
 import numpy as np
 
 #1. 데이터
-from tensorflow.keras.datasets import cifar10
-(x_train, y_train), (x_test, y_test) = cifar10.load_data()
+x_train = np.load('../data/npy/cifar10_x_train.npy')
+y_train = np.load('../data/npy/cifar10_y_train.npy')
+x_test = np.load('../data/npy/cifar10_x_test.npy')
+y_test = np.load('../data/npy/cifar10_y_test.npy')
 
 print(x_train.shape, y_train.shape) #(50000, 32, 32, 3) (50000, 1)
 print(x_test.shape, y_test.shape) #(10000, 32, 32, 3) (10000, 1)
