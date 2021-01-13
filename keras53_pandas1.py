@@ -7,20 +7,17 @@ dataset = load_iris()
 print(dataset.keys())
 print(dataset.values())
 print(dataset.target_names)     # ['setosa' 'versicolor' 'virginica']
-
 x = dataset.data
 y = dataset.target
 
 print(x.shape, y.shape)  # (150, 4) (150,)
 print(type(x), type(y))  # <class 'numpy.ndarray'> <class 'numpy.ndarray'>
-
 # df = pd.DataFrame(x, columns=dataset.feature_names)
 df = pd.DataFrame(x, columns=dataset['feature_names'])
 print(df)
 print(df.shape)
 print(df.columns)
 print(df.index)
-
 print(df.head())    # df[:5]
 print(df.tail())    # df[:-5]
 
@@ -41,7 +38,6 @@ print(df.shape)
 print(df.columns)
 print(df.index)
 print(df.tail())
-
 print(df.info())
 print(df.isnull())
 print(df.isnull().sum())
