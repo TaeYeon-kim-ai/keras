@@ -36,18 +36,18 @@ x_test, x_val, y_test, y_val = train_test_split(x_test, y_test, train_size= 0.8,
 
 #2. 모델링
 from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout
-model = Sequential()
-model.add(Conv2D(filters = 100, kernel_size=(2,2), strides =1 ,padding = 'SAME', input_shape = (10, 1, 1))) 
-model.add(Conv2D(500, kernel_size=(2,2), padding = 'SAME'))
-model.add(Conv2D(200, kernel_size=(2,2), padding = 'SAME'))
-model.add(Conv2D(100, kernel_size=(2,2), padding = 'SAME'))
-model.add(Conv2D(100, kernel_size=(2,2), padding = 'SAME'))
-model.add(Conv2D(100, kernel_size=(2,2), padding = 'SAME'))
-model.add(Dense(50, activation= 'relu'))
-model.add(Dense(50, activation= 'relu'))
-model.add(Dense(40, activation= 'relu'))
-model.add(Dense(10, activation= 'relu'))
+from tensorflow.keras.layers import Conv1D, MaxPooling1D, Dense, Flatten, Dropout, Input
+input1 = Input(shape = (x_train[1], 1))
+conv1 = Conv1D(100, 2, padding='SAME')(input1)
+maxp = MaxPooling1D(2)(conv1)
+conv1 = Conv1D(100, 2, padding='SAME')(maxp)
+drop = Dropout(0.2)
+dense1 = Dense(50, activation='relu')(drop)
+dense1 = Dense(50, activation='relu')(drop)
+dense1 = Dense(42, activation='relu')(drop)
+output1 = Dense(3, activation='relu')(dense1)
+model = Model(Input = input1, outputs = output1 )
+
 # model.add(Dropout(0.2)), 
 model.add(Dense(1, activation= 'relu'))
 

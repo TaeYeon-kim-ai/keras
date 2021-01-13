@@ -42,17 +42,29 @@ print(y_train.shape)
 #2. 모델링
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, Input, LSTM, Conv1D, MaxPooling1D, Dropout, Flatten
-input1 = Input(shape=(13,1))
-conv1d = Conv1D(50, 2, activation='relu', input_shape = (13,1))(input1)
-dense1 = MaxPooling1D(pool_size=1)(conv1d)
-conv1d = Conv1D(50, 2, activation='relu')(dense1)
+# input1 = Input(shape=(x.shape[1] ,1))
+# conv1d = Conv1D(50, 2, activation='relu')(input1)
+# dense1 = MaxPooling1D(pool_size=1)(conv1d)
+# conv1d = Conv1D(50, 2, activation='relu')(dense1)
+# dense1 = Dense(36, activation='relu')(dense1)
+# dense2 = Dense(40, activation='relu')(dense1) 
+# dense3 = Dense(40, activation='relu')(dense2)
+# dense4 = Dense(40, activation='relu')(dense3)
+# outputs = Dense(1)(dense4)
+# model = Model(inputs = input1, outputs = outputs)
+# model.summary()
+
+input1 = Input(shape=(x.shape[1],1))
+lstm = LSTM(50, activation='relu')(input1)
+dense1 =  Dense(50, activation='relu')(lstm)
 dense1 = Dense(36, activation='relu')(dense1)
-dense2 = Dense(40, activation='relu')(dense1) 
-dense3 = Dense(40, activation='relu')(dense2)
-dense4 = Dense(40, activation='relu')(dense3)
-outputs = Dense(1)(dense4)
+dense1 = Dense(40, activation='relu')(dense1) 
+dense1 = Dense(40, activation='relu')(dense1)
+dense1 = Dense(40, activation='relu')(dense1)
+outputs = Dense(1)(dense1)
 model = Model(inputs = input1, outputs = outputs)
 model.summary()
+
 
 #3. 컴파일, 훈련
 model.compile(loss = 'mse', optimizer='adam', metrics = ['mae'])
@@ -62,44 +74,14 @@ model.fit(x_train, y_train, epochs=100, batch_size=6, validation_data= (x_val, y
 loss, mae = model.evaluate(x_test, y_test)
 print("loss : ", loss)
 print("mae : ", mae)
-# x_pred = x_pred.reshape(1,5,1)
-# y_predict = model.predict(x_test) 
-# print('result :' ,y_predict)
 
-# #RMSE 구하기
-# from sklearn.metrics import mean_squared_error
-# def RMSE(y_test, y_predict) : 
-#     return np.sqrt(mean_squared_error(y_test, y_predict))  #sqrt는 루트
-# print("RMSE :" , RMSE(y_test, y_predict))
+y_predict = model.predict(x_test) 
+print('result :' ,y_predict[0])
 
-# from sklearn.metrics import r2_score
-# r2 = r2_score(y_test, y_predict)
-# print("R2 : ", r2 )
+#Conv1D
+# loss :  61.70733642578125
+# mae :  5.866117000579834
 
-#전처리 전
-# loss :  16.55705451965332
-# mae :  3.3871774673461914
-# RMSE : 4.069036165639308
-# R2 :  0.8019086688524137
-
-#통째로 전처리
-# loss :  11.465134620666504
-# mae :  2.5706095695495605
-# RMSE : 3.386020620416784
-# R2 :  0.8628292327610475
-
-#제대로 전처리(?)
-# loss :  531.5300903320312
-# mae :  21.24960708618164
-# RMSE : 23.054936080104717
-# R2 :  -5.359313211830821
-
-#발리데이션 test분리
-# loss :  5.44482421875
-# mae :  1.7919334173202515
-# RMSE : 2.3334145056348183
-# R2 :  0.9430991642272919
-
-
-#전처리가 된 데이터(정규화)
-#[6.3200e-03 1.8000e+01 2.3100e+00 0.0000e+00 5.3800e-01 6.5750e+00] = 되어있지않음...
+#LSTM
+# loss :  23.057985305786133
+# mae :  3.220595598220825

@@ -7,58 +7,58 @@ print(dataset.feature_names)
 
 x = dataset.data
 y = dataset.target
-# print(x)
-# print(y)
-print(x.shape) # (178, 13)
-print(y.shape) # (178,)
 
-# print(y)
-print(x.shape) #(178, 13)
-print(y.shape) #(178,3)
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+scaler.fit(x)
+x = scaler.transform(x)
+x = x.reshape(x.shape[0], x.shape[1], 1)
 
-y = y.reshape(-1,1)                 #. y_train => 2D
+#  keras.to_categorical
+from tensorflow.keras.utils import to_categorical
+y = to_categorical(y)
+print(x.shape)
+print(y.shape)
 
 from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size = 0.8, shuffle = True, random_state = 66)
 x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, train_size = 0.8, shuffle = True, random_state = 66)
 
-from sklearn.preprocessing import MinMaxScaler
-scaler = MinMaxScaler()
-scaler.fit(x_train)
-x_train = scaler.transform(x_train)
-x_test = scaler.transform(x_test)
-x_val = scaler.transform(x_val)
-
-x_train = x_train.reshape(x_train.shape[0], x_test.shape[1], 1)
-x_test = x_test.reshape(x_test.shape[0], x_test.shape[1], 1)
-x_val = x_val.reshape(x_val.shape[0], x_val.shape[1], 1)
-
-#  sklearn.onehotencoding
-from sklearn.preprocessing import OneHotEncoder
-one = OneHotEncoder()           
-one.fit(y_train)               
-y_train = one.transform(y_train).toarray()     
-y_test = one.transform(y_test).toarray()      
-y_val = one.transform(y_val).toarray()   
+print(x_train.shape) # (113, 13, 1)
+print(x_test.shape) #(36, 13, 1)
+print(x_val.shape) #(29, 13, 1)
 
 #2. 모델링
 from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Conv1D, MaxPooling1D, Dense, Flatten, Dropout
-model = Sequential()
-model.add(Conv1D(filters = 100, kernel_size=(2),padding = 'SAME', input_shape = (13, 1))) 
-model.add(Conv1D(500, kernel_size=(2), padding = 'SAME'))
-model.add(Conv1D(200, kernel_size=(2), padding = 'SAME'))
-model.add(Conv1D(100, kernel_size=(2), padding = 'SAME'))
-model.add(Conv1D(100, kernel_size=(2), padding = 'SAME'))
-model.add(Conv1D(100, kernel_size=(2), padding = 'SAME'))
-model.add(Dense(50, activation= 'relu'))
-model.add(Dense(50, activation= 'relu'))
-model.add(Dense(40, activation= 'relu'))
-model.add(Dense(10, activation= 'relu'))
-model.add(Dense(3, activation= 'softmax'))
+from tensorflow.keras.layers import Conv1D, MaxPooling1D, Dense, Flatten, Dropout, Input, LSTM
+# input1 = Input(shape=(x.shape[1] ,1))
+# conv1d = Conv1D(100, 2, padding='SAME')(input1)
+# maxp = MaxPooling1D(2)(conv1d)
+# conv1d = Conv1D(100, 2, activation='relu', padding='SAME')(maxp)
+# drop = Dropout(0.2)(conv1d)
+# fla = Flatten()(drop)
+# dense1 = Dense(36, activation='relu')(fla)
+# dense1 = Dense(40, activation='relu')(dense1) 
+# dense1 = Dense(40, activation='relu')(dense1)
+# dense1 = Dense(40, activation='relu')(dense1)
+# outputs = Dense(3, activation= 'softmax')(dense1)
+# model = Model(inputs = input1, outputs = outputs)
+# model.summary()
+
+input1 = Input(shape=(x.shape[1],1))
+lstm = LSTM(100, activation='relu')(input1)
+dense1 =  Dense(100, activation='relu')(lstm)
+drop = Dropout(0.2)(dense1)
+dense1 = Dense(36, activation='relu')(drop)
+dense1 = Dense(40, activation='relu')(dense1) 
+dense1 = Dense(40, activation='relu')(dense1)
+dense1 = Dense(40, activation='relu')(dense1)
+outputs = Dense(3, activation= 'softmax')(dense1)
+model = Model(inputs = input1, outputs = outputs)
 model.summary()
 
-#3. 컴파일,
+
+#3. 컴파일, 훈련
 #다중분류일 경우 : 
 from tensorflow.keras.callbacks import EarlyStopping
 early_stopping = EarlyStopping(monitor = 'loss', patience = 20, mode = 'auto')
@@ -71,7 +71,6 @@ print('loss : ', loss)
 print('acc : ', acc)
 
 y_pred = model.predict(x_train[-5:-1])
-print(y_pred)
 print(y_train[-5:-1])
 
 #y값 중에서 가장 큰 값을 1로 바꾼다 : argmax
@@ -79,28 +78,10 @@ print(y_train[-5:-1])
 print(np.argmax(y_pred, axis = -1))
 #print(np.argmax(y_pred, axis = 2)) 
 
-# loss :  1.943482129718177e-05
+#Conv1d
+# loss :  0.00042515600216574967
 # acc :  1.0
-# [[1.0000000e+00 2.2382447e-09 1.4489170e-09]
-#  [5.6554582e-06 9.9999440e-01 3.0707078e-08]
-#  [6.3094944e-08 3.6121787e-07 9.9999952e-01]
-#  [4.6856638e-07 9.9999940e-01 1.3655827e-07]]
-# [[1. 0. 0.]
-#  [0. 1. 0.]
-#  [0. 0. 1.]
-#  [0. 1. 0.]]
-# [0 1 2 1]
 
-# loss :  0.33169251680374146
-# acc :  0.8611111044883728
-# [[8.5227388e-01 7.2438195e-02 7.5287901e-02]
-#  [1.3748792e-03 7.7232337e-01 2.2630176e-01]
-#  [2.9319166e-03 1.4299753e-01 8.5407054e-01]
-#  [2.8391554e-05 9.9926752e-01 7.0417696e-04]]
-# [[1. 0. 0.]
-#  [0. 1. 0.]
-#  [0. 0. 1.]
-#  [0. 1. 0.]]
-# [0 1 2 1]
-
-
+#LSTM
+# loss :  0.3086625039577484
+# acc :  0.9166666865348816
